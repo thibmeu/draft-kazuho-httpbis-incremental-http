@@ -98,16 +98,22 @@ The Incremental HTTP header field expresses the sender's intent for HTTP
 intermediaries to start forwarding the message downstream before the entire
 message is received.
 
-This header field has just one valid value of type Boolean: "?1".
+This header field has two valid value of type Boolean: "?0" and "?1".
 
 ~~~
+Incremental = ?0
 Incremental = ?1
 ~~~
 
-Upon receiving a header section that includes the Incremental header field, HTTP
-intermediaries SHOULD NOT buffer the entire message before forwarding it.
+Upon receiving a header section that includes the Incremental header field with value "1",
+HTTP intermediaries SHOULD NOT buffer the entire message before forwarding it.
 Instead, intermediaries SHOULD transmit the header section downstream and
 continuously forward the bytes of the message body as they arrive.
+
+Upon receiving a header section that includes the Incremental header field with value "0",
+HTTP intermediaries SHOULD buffer the entire message before forwarding it.
+If intermediaries do not support buffering, or the buffering fails, they SHOULD reply with
+HTTP 412 status code.
 
 The Incremental HTTP header field applies to each HTTP message. Therefore, if
 both the HTTP request and response need to be forwarded incrementally, the
